@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { likePost, unlikePost } from "../controllers/likesController";
+import { likePost, unlikePost } from "../controllers/likesController.js";
 
 
 const likeRouter = Router();

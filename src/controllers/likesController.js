@@ -1,4 +1,4 @@
-import connectDB from "../database/database";
+import connectDB from "../database/database.js";
 
 const db = await connectDB();
 
@@ -26,7 +26,7 @@ export async function unlikePost(req, res) {
   const userId = 1;
 
   try {
-    const { rows } = await db.query("SELECT * FROM likes WHERE id = $1", [id]);
+    const { rows } = await db.query('SELECT * FROM likes WHERE "postId" = $1', [id]);
 
     if (rows.length === 0) {
       return res.sendStatus(404);
@@ -36,7 +36,7 @@ export async function unlikePost(req, res) {
       return res.sendStatus(401);
     }
 
-    await db.query("DELETE FROM likes WHERE id = $1", [id]);
+    await db.query('DELETE FROM likes WHERE "postId" = $1', [id]);
 
     res.status(204).send("Post descurtido");
   } catch (err) {

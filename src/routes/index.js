@@ -1,11 +1,13 @@
 import { Router } from "express";
 import userRouter from "./userRouter.js";
 import authRouter from "../routes/authRouter.js"
+import likeRouter from "./likeRouter.js";
 
 const routes = Router();
 
 routes.use(userRouter);
 routes.use(authRouter);
+routes.use(likeRouter);
 
 routes.get('/', (req, res, next) => {
   return res.status(200).json({ message: "Servidor em operacao" })

@@ -1,5 +1,12 @@
+import bcrypt from 'bcrypt';
+
 import { userSchema } from "../models/userModels.js";
 import userRepository from "../repositories/userRepositories.js";
+
+import connectDB from "../database/database.js";
+import { generateToken } from "../utils/jwt.js";
+
+const db = await connectDB();
 
 export async function signUp(req, res) {
     const { email, password, username, pictureUrl } = req.body;
@@ -22,5 +29,32 @@ export async function signUp(req, res) {
     } catch (err) {
         console.log(err);
         res.sendStatus(500);
+    }
+}
+
+export default {
+    signIn: async (req, res) => {
+        try {
+            const { email, password } = req.body;
+            const userExist = await userRepository.getByEmail(email);
+
+            if (!userExist?.rows[0]) {
+                return res.status(422).send('Usuáio não encontrado');
+            }
+
+            const validateToken = bcrypt.compareSync(password, userExist?.rows[0].password);
+
+            if (!validateToken) {
+                return res.status(422).send('Senha inválida')
+            }
+
+           let token = generateToken({
+                id: userExist?.rows[0]?.id
+            });
+
+            return res.status(200).send(token);
+        } catch (error) {
+            return res.sendStatus(404);
+        }
     }
 }

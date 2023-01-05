@@ -2,6 +2,7 @@ import { userSchema } from "../models/userModels.js";
 import userRepository from "../repositories/userRepositories.js";
 
 export async function signUp(req, res) {
+    const { email, password, username, pictureUrl } = req.body;
     const { error } = userSchema.validate({ email, password, username, pictureUrl }, { abortEarly: false });
 
     if (error) {

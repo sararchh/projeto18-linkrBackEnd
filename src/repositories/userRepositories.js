@@ -1,8 +1,11 @@
-import db from "../database/database.js";
+import connectDB from "../database/database.js";
 import bcrypt from "bcrypt";
 
+const db = await connectDB();
+
 async function getByEmail(email) {
-    return db.query(`SELECT * FROM users WHERE email=$1;`, [email.toLowerCase()]);
+    const userExist = await db.query(`SELECT * FROM users WHERE email=$1;`, [email.toLowerCase()]);
+    return userExist;
 };
 
 async function insertUser(data) {
@@ -13,7 +16,7 @@ async function insertUser(data) {
     } catch (err) {
         console.log(err);
     }
-}
+};
 
 const userRepository = {
     getByEmail,

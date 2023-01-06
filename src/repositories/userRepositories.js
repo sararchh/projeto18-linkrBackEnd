@@ -19,8 +19,8 @@ async function insertUser(data) {
 };
 
 const userRepository = {
-    getByEmail,
-    insertUser,
+  getByEmail,
+  insertUser,
 };
 
 export default userRepository;

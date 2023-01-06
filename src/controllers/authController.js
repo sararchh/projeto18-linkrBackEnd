@@ -39,7 +39,7 @@ export default {
             const userExist = await userRepository.getByEmail(email);
 
             if (!userExist?.rows[0]) {
-                return res.status(422).send('Usuáio não encontrado');
+                return res.status(422).send('Usuário não encontrado');
             }
 
             const validateToken = bcrypt.compareSync(password, userExist?.rows[0].password);
@@ -54,7 +54,6 @@ export default {
 
             return res.status(200).send(token);
         } catch (error) {
-            console.log(error);
             return res.sendStatus(404)
 
         }

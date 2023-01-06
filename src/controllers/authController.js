@@ -54,7 +54,9 @@ export default {
 
             return res.status(200).send(token);
         } catch (error) {
-            return res.status(404).send(error);
+            console.log(error);
+            return res.sendStatus(404)
+
         }
     }
 }

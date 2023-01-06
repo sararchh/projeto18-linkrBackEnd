@@ -8,6 +8,9 @@ export async function likePost(req, res) {
   const userId = 1; //pra testar até aprender a pegar o userId;
 
   try {
+    await db.query('UPDATE posts SET "isLiked" = true WHERE "id"=$1 ', [id]);
+
+    //adicionar a linha na tabela likes
     await db.query('INSERT INTO likes ("postId", "userId") VALUES ($1, $2)', [
       id,
       userId,
@@ -26,6 +29,10 @@ export async function unlikePost(req, res) {
   const userId = 1;
 
   try {
+    await db.query('UPDATE posts SET "isLiked" = false WHERE "id"=$1 ', [id]);
+
+    //apagar a linha na tabela likes
+
     const { rows } = await db.query('SELECT * FROM likes WHERE "postId" = $1', [id]);
 
     if (rows.length === 0) {
@@ -38,7 +45,7 @@ export async function unlikePost(req, res) {
 
     await db.query('DELETE FROM likes WHERE "postId" = $1', [id]);
 
-    res.status(204).send("Post descurtido");
+    res.status(201).send("Post descurtido");
   } catch (err) {
     res.status(500).send(err.message);
   }

@@ -33,7 +33,9 @@ export async function unlikePost(req, res) {
 
     //apagar a linha na tabela likes
 
-    const { rows } = await db.query('SELECT * FROM likes WHERE "postId" = $1', [id]);
+    const { rows } = await db.query('SELECT * FROM likes WHERE "postId" = $1', [
+      id,
+    ]);
 
     if (rows.length === 0) {
       return res.sendStatus(404);
@@ -48,5 +50,36 @@ export async function unlikePost(req, res) {
     res.status(201).send("Post descurtido");
   } catch (err) {
     res.status(500).send(err.message);
+  }
+}
+
+export async function getUsersLikesByPostId(req, res) {
+  const { id } = req.params;
+  //const userId = res.locals.userId;
+  const userId = 1; //pra testar até aprender a pegar o userId;
+
+  try {
+    const usersThatLiked = await db.query(
+      'SELECT ("userId") FROM likes WHERE "postId" = $1',
+      [id]
+    );
+
+    console.log(usersThatLiked.rows[0].userId);
+
+    let users = []
+
+    for (let i = 0; i < usersThatLiked.rows; i++) {
+      const {rows} = await db.query('SELECT "username" FROM users WHERE id = $1', [usersThatLiked.rows[i].userId])
+
+      console.log(rows)
+      users.push(rows)
+
+    }
+
+    console.log(users)
+
+    res.status(202).send(users);
+  } catch (err) {
+    console.log(err);
   }
 }

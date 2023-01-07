@@ -6,7 +6,18 @@ export async function getPosts(req, res){
 
 try{
     const posts = await db.query('SELECT * FROM posts ORDER BY "createdAt" DESC LIMIT 20;')
-    res.send(posts.rows)
+
+    //para pegar os usuários que curtiram cada post
+    const usersLiked = await db.query(
+        'SELECT users."username", likes."postId" FROM users JOIN likes ON users.id = likes."userId"'
+      );
+
+    const mainData = {
+        posts: posts.rows,
+        likes: usersLiked.rows
+    }  
+
+    res.send(mainData)
 }catch (err) {
     res.status(500).send(err.message);
 }

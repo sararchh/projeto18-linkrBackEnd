@@ -5,18 +5,35 @@ const db = await connectDB();
 export async function likePost(req, res) {
   const { id } = req.params;
   //const userId = res.locals.userId;
-  const userId = 1; //pra testar até aprender a pegar o userId;
+  const userId = 14; //pra testar até aprender a pegar o userId;
 
   try {
     await db.query('UPDATE posts SET "isLiked" = true WHERE "id"=$1 ', [id]);
 
     //adicionar a linha na tabela likes
+    const userLiked = await db.query(
+      'SELECT * FROM likes WHERE "userId" = $1 AND "id"=$2',
+      [userId, id]
+    );
+
+    if (userLiked.rows.length > 0) {
+      return res.sendStatus(409);
+    }
+
     await db.query('INSERT INTO likes ("postId", "userId") VALUES ($1, $2)', [
       id,
       userId,
     ]);
 
-    res.status(201).send("Post curtido");
+    //quem curtiu o post
+    const usersThatLiked = await db.query(
+      'SELECT ("username") FROM users JOIN likes ON users.id = likes."userId" WHERE "postId" = $1',
+      [id]
+    );
+
+    const users = usersThatLiked.rows.map((u) => u.username);
+
+    res.status(201).send(users);
   } catch (err) {
     res.status(500).send(err);
   }
@@ -26,16 +43,17 @@ export async function unlikePost(req, res) {
   const { id } = req.params;
 
   //const userId = res.locals.userId;
-  const userId = 1;
+  const userId = 14;
 
   try {
     await db.query('UPDATE posts SET "isLiked" = false WHERE "id"=$1 ', [id]);
 
     //apagar a linha na tabela likes
 
-    const { rows } = await db.query('SELECT * FROM likes WHERE "postId" = $1', [
-      id,
-    ]);
+    const { rows } = await db.query(
+      'SELECT * FROM likes WHERE "postId" = $1 AND "userId" = $2',
+      [id, userId]
+    );
 
     if (rows.length === 0) {
       return res.sendStatus(404);
@@ -45,9 +63,19 @@ export async function unlikePost(req, res) {
       return res.sendStatus(401);
     }
 
-    await db.query('DELETE FROM likes WHERE "postId" = $1', [id]);
+    await db.query('DELETE FROM likes WHERE "postId" = $1 AND "userId" = $2 ', [
+      id,
+      userId,
+    ]);
 
-    res.status(201).send("Post descurtido");
+    const usersThatLiked = await db.query(
+      'SELECT ("username") FROM users JOIN likes ON users.id = likes."userId" WHERE "postId" = $1',
+      [id]
+    );
+
+    const users = usersThatLiked.rows.map((u) => u.username);
+
+    res.status(201).send(users);
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -59,26 +87,15 @@ export async function getUsersLikesByPostId(req, res) {
   const userId = 1; //pra testar até aprender a pegar o userId;
 
   try {
+  
+
     const usersThatLiked = await db.query(
-      'SELECT ("userId") FROM likes WHERE "postId" = $1',
-      [id]
+      'SELECT users."username", likes."postId" FROM users JOIN likes ON users.id = likes."userId"'
+      
     );
 
-    console.log(usersThatLiked.rows[0].userId);
 
-    let users = []
-
-    for (let i = 0; i < usersThatLiked.rows; i++) {
-      const {rows} = await db.query('SELECT "username" FROM users WHERE id = $1', [usersThatLiked.rows[i].userId])
-
-      console.log(rows)
-      users.push(rows)
-
-    }
-
-    console.log(users)
-
-    res.status(202).send(users);
+    res.status(202).send(posts.rows);
   } catch (err) {
     console.log(err);
   }

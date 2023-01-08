@@ -5,7 +5,7 @@ const db = await connectDB();
 export async function getPosts(req, res){
 
 try{
-    const posts = await db.query('SELECT posts.*, users.* FROM posts JOIN users ON posts."userId" = users.id ORDER BY posts."createdAt" DESC LIMIT 20;')
+    const posts = await db.query('SELECT posts.*,posts.id AS "postId", users.* FROM posts JOIN users ON posts."userId" = users.id ORDER BY posts."createdAt" DESC LIMIT 20;')
     console.log(posts.rows)
     //para pegar os usuários que curtiram cada post
     const usersLiked = await db.query(
@@ -43,4 +43,14 @@ try{
 }
 }
 
+
+export async function deletePost(req, res){
+    const {id} = req.params
+    try{
+        await db.query('DELETE FROM posts WHERE id = $1;', [id])
+        res.sendStatus(204)
+    }catch (err) {
+        res.status(500).send(err.message);
+    }
+}
 

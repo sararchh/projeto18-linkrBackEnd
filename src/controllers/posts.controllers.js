@@ -12,9 +12,12 @@ try{
         'SELECT users."username", likes."postId" FROM users JOIN likes ON users.id = likes."userId"'
       );
 
+    const userId = req.userId
+    const dadosUser =  await db.query('SELECT * FROM users WHERE id = $1;', [userId])
     const mainData = {
         posts: posts.rows,
-        likes: usersLiked.rows
+        likes: usersLiked.rows,
+        dadosUser: dadosUser.rows
     }  
 
     res.send(mainData)
@@ -26,8 +29,8 @@ try{
 
 export async function createPost(req, res){
     const {url, content} = req.body
-    //const userId = req.userId
-    const userId = 17
+    const userId = req.userId
+    
     console.log(userId)
     const dadosUser =  await db.query('SELECT * FROM users WHERE id = $1;', [userId])
 
@@ -54,3 +57,13 @@ export async function deletePost(req, res){
     }
 }
 
+export async function editPost(req, res){
+    const {content} = req.body
+    const {id} = req.params
+    try{
+        await db.query('UPDATE posts SET content = $1 WHERE id = $2;', [content, id])
+        res.sendStatus(204)
+    }catch (err) {
+        res.status(500).send(err.message);
+    }
+}

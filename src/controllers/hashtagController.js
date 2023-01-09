@@ -13,13 +13,13 @@ export async function getPostsByHashtagName(req, res) {
       [hashtag]
     );
 
-    console.log(rows);
+
 
     if (rows.length === 0) {
       return res.sendStatus(404);
     }
 
-    res.status(201).send(rows[0]);
+    res.status(201).send(rows);
   } catch (err) {
     console.log(err);
   }

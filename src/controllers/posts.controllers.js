@@ -10,15 +10,20 @@ export async function getPosts(req, res) {
     console.log(posts.rows);
     //para pegar os usuários que curtiram cada post
     const usersLiked = await db.query(
-      'SELECT users."username", likes."postId" FROM users JOIN likes ON users.id = likes."userId"'
+      'SELECT users."username", likes."postId" FROM users JOIN likes ON users.id = likes."userId";'
     );
+    //para pegar a lista de trending 
+    const trendingList = await db.query(
+      'SELECT name FROM hashtags;'
+    )
 
     const userId = req.userId
     const dadosUser =  await db.query('SELECT * FROM users WHERE id = $1;', [userId])
     const mainData = {
         posts: posts.rows,
         likes: usersLiked.rows,
-        dadosUser: dadosUser.rows
+        dadosUser: dadosUser.rows,
+        trendingList: trendingList.rows
     }  
 
     res.send(mainData);

@@ -4,8 +4,7 @@ const db = await connectDB();
 
 export async function likePost(req, res) {
   const { id } = req.params;
-  //const userId = res.locals.userId;
-  const userId = 14; //pra testar até aprender a pegar o userId;
+  const userId = req.userId;
 
   try {
     await db.query('UPDATE posts SET "isLiked" = true WHERE "id"=$1 ', [id]);
@@ -41,9 +40,7 @@ export async function likePost(req, res) {
 
 export async function unlikePost(req, res) {
   const { id } = req.params;
-
-  //const userId = res.locals.userId;
-  const userId = 14;
+  const userId = req.userId;
 
   try {
     await db.query('UPDATE posts SET "isLiked" = false WHERE "id"=$1 ', [id]);
@@ -87,13 +84,24 @@ export async function getUsersLikesByPostId(req, res) {
   const userId = 1; //pra testar até aprender a pegar o userId;
 
   try {
-  
-
-    const usersThatLiked = await db.query(
-      'SELECT users."username", likes."postId" FROM users JOIN likes ON users.id = likes."userId"'
-      
+    const posts = await db.query(
+      'SELECT posts.*,posts.id AS "postId", users.* FROM posts JOIN users ON posts."userId" = users.id ORDER BY posts."createdAt" DESC LIMIT 20;'
     );
 
+    posts.rows.map(async (p) => {
+      const usersThatLiked = await db.query(
+        'SELECT users."username" FROM users JOIN likes ON users.id = likes."userId" WHERE likes."postId" = $1;',
+        [p.postId]
+      );
+
+      console.log(typeof(p))
+
+      if (usersThatLiked.rows.length === 0) {
+        p.whoLiked = [];
+      } else {
+        p.whoLiked = usersThatLiked.rows;
+      }
+    });
 
     res.status(202).send(posts.rows);
   } catch (err) {

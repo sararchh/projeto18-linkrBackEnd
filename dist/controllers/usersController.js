@@ -1,10 +1,10 @@
-import express from "express";
+"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _express = require('express'); var _express2 = _interopRequireDefault(_express);
 
-import connectDB from "../database/database.js";
+var _databasejs = require('../database/database.js'); var _databasejs2 = _interopRequireDefault(_databasejs);
 
-const db = await connectDB();
+const db = await _databasejs2.default.call(void 0, );
 
-export default {
+exports. default = {
   findAll: async (req, res) => {
     try {
       const { name } = req.params;
@@ -17,7 +17,7 @@ export default {
   }
 }
 
-export async function findUserById(req, res) {
+ async function findUserById(req, res) {
   try {
     const { id } = req.params;
     const userInfo = await db.query(`SELECT * FROM users WHERE id $1;`, [id]);
@@ -38,4 +38,4 @@ export async function findUserById(req, res) {
   } catch (err) {
     return res.sendStatus(404);
   }
-}
+} exports.findUserById = findUserById;

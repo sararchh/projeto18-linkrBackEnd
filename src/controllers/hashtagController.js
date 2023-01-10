@@ -13,13 +13,24 @@ export async function getPostsByHashtagName(req, res) {
       [hashtag]
     );
 
+    //para pegar os usuários que curtiram cada post
+    const usersLiked = await db.query(
+      'SELECT users."username", likes."postId" FROM users JOIN likes ON users.id = likes."userId";'
+    );
+    //para pegar a lista de trending
+    const trendingList = await db.query("SELECT name FROM hashtags;");
 
+    const dadosUser = await db.query('SELECT * FROM users WHERE id = $1;', [userId])
 
-    if (rows.length === 0) {
-      return res.sendStatus(404);
+    const mainHashtagData = {
+      posts: rows,
+      likes: usersLiked.rows,
+      dadosUser: dadosUser.rows,
+      trendingList: trendingList.rows
     }
+    
 
-    res.status(201).send(rows);
+    res.status(201).send(mainHashtagData);
   } catch (err) {
     console.log(err);
   }

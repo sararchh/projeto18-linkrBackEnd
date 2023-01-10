@@ -94,8 +94,6 @@ export async function getUsersLikesByPostId(req, res) {
         [p.postId]
       );
 
-      console.log(typeof(p))
-
       if (usersThatLiked.rows.length === 0) {
         p.whoLiked = [];
       } else {

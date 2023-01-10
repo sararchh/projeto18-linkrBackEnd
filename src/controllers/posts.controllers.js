@@ -39,7 +39,7 @@ export async function createPost(req, res) {
     const { url, content } = req.body
     const userId = req.userId
 
-    console.log(userId)
+    //console.log(userId)
     const dadosUser = await db.query('SELECT * FROM users WHERE id = $1;', [userId])
 
     /*const { authorization } = req.headers;
@@ -77,7 +77,7 @@ export async function createPost(req, res) {
             );
 
             //se a hashtag já existir no banco
-            if (hashtagExists) {
+            if (hashtagExists.rows.length !== 0) {
                 const hashtagId = hashtagExists.rows[0].id;
 
                 await db.query(
@@ -105,7 +105,7 @@ export async function createPost(req, res) {
             }
         });
 
-        console.log(metadata)
+        //console.log(metadata)
         res.send("post criado");
     } catch (err) {
         res.status(500).send(err.message);

@@ -84,24 +84,14 @@ export async function getUsersLikesByPostId(req, res) {
   const userId = 1; //pra testar até aprender a pegar o userId;
 
   try {
-    const posts = await db.query(
-      'SELECT posts.*,posts.id AS "postId", users.* FROM posts JOIN users ON posts."userId" = users.id ORDER BY posts."createdAt" DESC LIMIT 20;'
-    );
+    
+      const hashtagsDoPost = await db.query(
+        'SELECT * FROM "postHashtags" WHERE "postId" = $1',
+        [id]
+      )
 
-    posts.rows.map(async (p) => {
-      const usersThatLiked = await db.query(
-        'SELECT users."username" FROM users JOIN likes ON users.id = likes."userId" WHERE likes."postId" = $1;',
-        [p.postId]
-      );
 
-      if (usersThatLiked.rows.length === 0) {
-        p.whoLiked = [];
-      } else {
-        p.whoLiked = usersThatLiked.rows;
-      }
-    });
-
-    res.status(202).send(posts.rows);
+    res.status(202).send(hashtagsDoPost.rows);
   } catch (err) {
     console.log(err);
   }

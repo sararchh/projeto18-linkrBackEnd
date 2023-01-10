@@ -39,7 +39,7 @@ export async function createPost(req, res) {
     const { url, content } = req.body
     const userId = req.userId
 
-    console.log(userId)
+    //console.log(userId)
     const dadosUser = await db.query('SELECT * FROM users WHERE id = $1;', [userId])
 
     /*const { authorization } = req.headers;
@@ -77,7 +77,7 @@ export async function createPost(req, res) {
             );
 
             //se a hashtag já existir no banco
-            if (hashtagExists) {
+            if (hashtagExists.rows.length !== 0) {
                 const hashtagId = hashtagExists.rows[0].id;
 
                 await db.query(
@@ -105,7 +105,7 @@ export async function createPost(req, res) {
             }
         });
 
-        console.log(metadata)
+        //console.log(metadata)
         res.send("post criado");
     } catch (err) {
         res.status(500).send(err.message);
@@ -115,6 +115,13 @@ export async function createPost(req, res) {
 export async function deletePost(req, res) {
     const { id } = req.params;
     try {
+        //deletar as linhas da tabela postHashtags referentes ao post
+        await db.query('DELETE FROM "postHashtags" WHERE "postId" = $1;', [id]);
+
+        //deletar as linhas da tabela likes referentes ao post
+        await db.query('DELETE FROM likes WHERE "postId" = $1;', [id] )
+
+        //deletar o post
         await db.query("DELETE FROM posts WHERE id = $1;", [id]);
         res.sendStatus(204);
     } catch (err) {
@@ -126,6 +133,8 @@ export async function editPost(req, res) {
     const { content } = req.body
     const { id } = req.params
     try {
+        
+
         await db.query('UPDATE posts SET content = $1 WHERE id = $2;', [content, id])
         res.sendStatus(204)
     } catch (err) {

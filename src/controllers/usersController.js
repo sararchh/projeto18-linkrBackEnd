@@ -20,10 +20,11 @@ export default {
 export async function findUserById(req, res) {
   try {
     const { id } = req.params;
-    
+
     const userInfo = await db.query(`SELECT * FROM users WHERE id = $1;`, [id]);
     const userPosts = await db.query(`SELECT * FROM posts WHERE "userId" = $1;`, [id]);
     const likes = await db.query(`SELECT * FROM likes WHERE "userId" = $1;`, [id]);
+
 
     if (userPosts.length === 0) {
       userPosts = "User has no posts!"

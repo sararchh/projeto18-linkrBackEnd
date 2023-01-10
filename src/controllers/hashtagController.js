@@ -21,6 +21,6 @@ export async function getPostsByHashtagName(req, res) {
 
     res.status(201).send(rows);
   } catch (err) {
-    console.log(err);
+    console.log({ getPostsByHashtagName: err });
   }
 }

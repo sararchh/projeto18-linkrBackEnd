@@ -14,7 +14,7 @@ async function insertUser(data) {
     try {
         await db.query(`INSERT INTO users (email, password, username, "pictureUrl") VALUES ($1, $2, $3, $4);`, [email.toLowerCase(), passwordHash, username, pictureUrl]);
     } catch (err) {
-        console.log(err);
+        console.log({insertUser:err});
     }
 };
 

@@ -39,7 +39,6 @@ export async function createPost(req, res) {
     const { url, content } = req.body
     const userId = req.userId
 
-    console.log(userId)
     const dadosUser = await db.query('SELECT * FROM users WHERE id = $1;', [userId])
 
     /*const { authorization } = req.headers;
@@ -105,7 +104,7 @@ export async function createPost(req, res) {
             }
         });
 
-        console.log(metadata)
+
         res.send("post criado");
     } catch (err) {
         res.status(500).send(err.message);

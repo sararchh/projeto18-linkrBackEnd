@@ -20,6 +20,7 @@ export default {
 export async function findUserById(req, res) {
   try {
     const { id } = req.params;
+    const userId = req.userId;
 
     const userInfo = await db.query(`SELECT * FROM users WHERE id = $1;`, [id]);
     const userPosts = await db.query(`SELECT * FROM posts WHERE "userId" = $1;`, [id]);
@@ -38,6 +39,10 @@ export async function findUserById(req, res) {
       'SELECT users."username", likes."postId" FROM users JOIN likes ON users.id = likes."userId";'
     );
 
+    const usersFollowed = await db.query(
+      'SELECT "userFollowedId" FROM follows WHERE "userId" = $1;', [userId]
+    )
+
 
 
     if (userPosts.length === 0) {
@@ -51,6 +56,8 @@ export async function findUserById(req, res) {
       user: userInfo.rows[0],
       likes: usersLiked.rows,
       posts: posts.rows,
+      usersFollowed: usersFollowed.rows
+
     };
 
     return res.status(200).send(body);

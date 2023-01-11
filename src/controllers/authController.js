@@ -27,7 +27,6 @@ export async function signUp(req, res) {
         await userRepository.insertUser(req.body);
         res.status(201).send("Usuario cadastrado!");
     } catch (err) {
-        console.log(err);
         res.sendStatus(500);
     }
 }
@@ -52,9 +51,8 @@ export default {
                 id: userExist?.rows[0]?.id
             });
 
-            return res.status(200).send(token);
+            return res.status(200).send({token, user:userExist?.rows[0].pictureUrl });
         } catch (error) {
-            console.log({error});
             return res.status(404).send(error)
 
         }

@@ -1,8 +1,8 @@
-import connectDB from "../database/database.js";
+"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _databasejs = require('../database/database.js'); var _databasejs2 = _interopRequireDefault(_databasejs);
 
-const db = await connectDB();
+const db = await _databasejs2.default.call(void 0, );
 
-export async function likePost(req, res) {
+ async function likePost(req, res) {
   const { id } = req.params;
   const userId = req.userId;
 
@@ -36,9 +36,9 @@ export async function likePost(req, res) {
   } catch (err) {
     res.status(500).send(err);
   }
-}
+} exports.likePost = likePost;
 
-export async function unlikePost(req, res) {
+ async function unlikePost(req, res) {
   const { id } = req.params;
   const userId = req.userId;
 
@@ -76,9 +76,9 @@ export async function unlikePost(req, res) {
   } catch (err) {
     res.status(500).send(err.message);
   }
-}
+} exports.unlikePost = unlikePost;
 
-export async function getUsersLikesByPostId(req, res) {
+ async function getUsersLikesByPostId(req, res) {
   const { id } = req.params;
   //const userId = res.locals.userId;
   const userId = 1; //pra testar até aprender a pegar o userId;
@@ -103,4 +103,4 @@ export async function getUsersLikesByPostId(req, res) {
   } catch (err) {
     console.log({getUsersLikesByPostId:err});
   }
-}
+} exports.getUsersLikesByPostId = getUsersLikesByPostId;

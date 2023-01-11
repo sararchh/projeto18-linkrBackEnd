@@ -1,8 +1,8 @@
-import connectDB from "../database/database.js";
+"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _databasejs = require('../database/database.js'); var _databasejs2 = _interopRequireDefault(_databasejs);
 
-const db = await connectDB();
+const db = await _databasejs2.default.call(void 0, );
 
-export async function getPostsByHashtagName(req, res) {
+ async function getPostsByHashtagName(req, res) {
   const { hashtag } = req.params;
 
   const userId = req.userId;
@@ -34,4 +34,4 @@ export async function getPostsByHashtagName(req, res) {
   } catch (err) {
     console.log({ getPostsByHashtagName: err });
   }
-}
+} exports.getPostsByHashtagName = getPostsByHashtagName;

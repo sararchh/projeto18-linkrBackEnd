@@ -4,10 +4,14 @@ import getMetaData from 'metadata-scraper'
 const db = await connectDB();
 
 export async function getPosts(req, res) {
+    const userId = req.userId
     try {
         const posts = await db.query(
-            'SELECT posts.*,posts.id AS "postId", users.* FROM posts JOIN users ON posts."userId" = users.id ORDER BY posts."createdAt" DESC LIMIT 20;'
+            'SELECT posts.*,posts.id AS "postId", users.* FROM posts JOIN users ON posts."userId" = users.id JOIN follows on follows."userFollowedId" = users.id WHERE follows."userId" = $1 ORDER BY posts."createdAt" DESC LIMIT 20;',
+            [userId]
         );
+
+        console.log(posts)
         
         //para pegar os usuários que curtiram cada post
         const usersLiked = await db.query(
@@ -18,14 +22,19 @@ export async function getPosts(req, res) {
             'SELECT name FROM hashtags;'
         )
 
+        //para pegar a lista de usuários seguidos pelo user logado
+        const usersFollowed = await db.query(
+            'SELECT "userFollowedId" FROM follows WHERE "userId" = $1;', [userId]
+          )
 
-        const userId = req.userId
+
         const dadosUser = await db.query('SELECT * FROM users WHERE id = $1;', [userId])
         const mainData = {
             posts: posts.rows,
             likes: usersLiked.rows,
             dadosUser: dadosUser.rows,
-            trendingList: trendingList.rows
+            trendingList: trendingList.rows,
+            usersFollowed: usersFollowed.rows
         }
 
         res.send(mainData);

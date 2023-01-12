@@ -39,6 +39,7 @@ export async function findUserById(req, res) {
       'SELECT users."username", likes."postId" FROM users JOIN likes ON users.id = likes."userId";'
     );
 
+    
     const usersFollowed = await db.query(
       'SELECT "userFollowedId" FROM follows WHERE "userId" = $1;', [userId]
     )

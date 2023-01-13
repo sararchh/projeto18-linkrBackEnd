@@ -6,6 +6,7 @@ import userRepository from "../repositories/userRepositories.js";
 import connectDB from "../database/database.js";
 import { generateToken } from "../utils/jwt.js";
 
+//fsdfs
 const db = await connectDB();
 
 export async function signUp(req, res) {

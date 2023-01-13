@@ -6,11 +6,27 @@ const db = await connectDB();
 
 export default {
   findAll: async (req, res) => {
+
+    
+  
     try {
       const { name } = req.params;
-      const selectedUsers = await db.query(`SELECT * FROM users WHERE username LIKE '%' || $1 || '%'`, [name]);
+      const userId = req.userId
 
-      return res.status(200).send(selectedUsers.rows);
+      //para pegar os usuários seguidos
+      const followedUsers = await db.query(
+        `SELECT users.*, users.id as "userId", COALESCE(follows."userId", 0) as "followsUserId", follows.id AS "followsId" FROM users JOIN follows ON follows."userFollowedId" = users.id WHERE follows."userId" = $1 AND users.username LIKE '%' || $2 || '%' `, [userId, name]) 
+
+      //e pra pegar os não seguidos
+
+      const noFollowedUsers = await db.query(
+        `SELECT users.*, users.id as "userId", COALESCE(follows."userId", 0) as "followsUserId", follows.id AS "followsId" FROM users LEFT JOIN follows ON follows."userFollowedId" = users.id WHERE COALESCE(follows."userId", 0) != $1 AND users.username LIKE '%' || $2 || '%' `, [userId, name])
+
+      const selectedUsers = followedUsers.rows.concat(noFollowedUsers.rows);
+      
+      //const selectedUsers = await db.query(`SELECT * FROM users WHERE username LIKE '%' || $1 || '%'`, [name]);
+
+      return res.status(200).send({selectedUsers, userId: userId});
     } catch (error) {
       return res.sendStatus(404);
     }

@@ -6,7 +6,7 @@ import { userSearch } from "../middlewares/userSearch.js";
 
 const userRouter = Router();
 
-userRouter.get("/users/:name", [userSearch], usersController.findAll);
+userRouter.get("/users/:name", [checkjwt], [userSearch], usersController.findAll);
 
 userRouter.get("/users/post/:id", [checkjwt], findUserById);
 
